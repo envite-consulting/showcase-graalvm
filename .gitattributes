@@ -1,0 +1,9 @@
+# Set the default behavior to eol=lf in order to support Docker builds on Windows
+* text eol=lf
+
+# Declare files that will always have CRLF line endings on checkout.
+*.cmd text eol=crlf
+
+# Make py and txt dependend on users core.autocrlf config
+*.py text=auto
+*.txt text=auto

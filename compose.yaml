@@ -1,0 +1,247 @@
+services:
+
+########################################
+######### DIFFERENT COMPILERS ##########
+########################################
+
+  graalvm-demo-book-jvm:
+    container_name: graalvm-demo-book-jvm
+    image: graalvm-demo-book-jvm:0.1.0
+    build:
+      context: ./graalvm-demo-book
+      dockerfile: Dockerfile.jvm
+    restart: always
+    depends_on:
+      - mongo
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATA_MONGODB_URI=mongodb://demo:graalvm@mongo:27017/demo?authSource=admin
+    #cpuset: "0-7"
+    deploy:
+      resources:
+        limits:
+          memory: '512M'
+          cpus: '0.5'
+        reservations:
+          memory: '512M'
+          cpus: '0.5'
+    ports:
+      - "8080:8080"
+    networks:
+      - lecture
+
+  graalvm-demo-book-jvm-jlink:
+    container_name: graalvm-demo-book-jvm-jlink
+    image: graalvm-demo-book-jvm-jlink:0.1.0
+    build:
+      context: ./graalvm-demo-book
+      dockerfile: Dockerfile.jvm-jlink
+    restart: always
+    depends_on:
+      - mongo
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATA_MONGODB_URI=mongodb://demo:graalvm@mongo:27017/demo?authSource=admin
+    cpuset: "0-7"
+    deploy:
+      resources:
+        limits:
+          memory: '512M'
+          cpus: '0.5'
+        reservations:
+          memory: '512M'
+          cpus: '0.5'
+    ports:
+      - "8081:8080"
+    networks:
+      - lecture
+
+  graalvm-demo-book-jvm-jlink-cds:
+    container_name: graalvm-demo-book-jvm-jlink-cds
+    image: graalvm-demo-book-jvm-jlink-cds:0.1.0
+    build:
+      context: ./graalvm-demo-book
+      dockerfile: Dockerfile.jvm-jlink-cds
+    restart: always
+    depends_on:
+      - mongo
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATA_MONGODB_URI=mongodb://demo:graalvm@mongo:27017/demo?authSource=admin
+    #cpuset: "0-7"
+    deploy:
+      resources:
+        limits:
+          memory: '512M'
+          cpus: '0.5'
+        reservations:
+          memory: '512M'
+          cpus: '0.5'
+    ports:
+      - "8082:8080"
+    networks:
+      - lecture
+
+  graalvm-demo-book-jvm-jlink-cds-aot:
+    container_name: graalvm-demo-book-jvm-jlink-cds-aot
+    image: graalvm-demo-book-jvm-jlink-cds-aot:0.1.0
+    build:
+      context: ./graalvm-demo-book
+      dockerfile: Dockerfile.jvm-jlink-cds-aot
+    restart: always
+    depends_on:
+      - mongo
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATA_MONGODB_URI=mongodb://demo:graalvm@mongo:27017/demo?authSource=admin
+    #cpuset: "0-7"
+    deploy:
+      resources:
+        limits:
+          memory: '512M'
+          cpus: '0.5'
+        reservations:
+          memory: '512M'
+          cpus: '0.5'
+    ports:
+      - "8083:8080"
+    networks:
+      - lecture
+
+  graalvm-demo-book-native:
+    container_name: graalvm-demo-book-native
+    image: graalvm-demo-book-native:0.1.0
+    build:
+      context: ./graalvm-demo-book
+      dockerfile: Dockerfile.native
+    restart: always
+    depends_on:
+      - mongo
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATA_MONGODB_URI=mongodb://demo:graalvm@mongo:27017/demo?authSource=admin
+    #cpuset: "0-7"
+    deploy:
+      resources:
+        limits:
+          memory: '512M'
+          cpus: '0.5'
+        reservations:
+          memory: '512M'
+          cpus: '0.5'
+    ports:
+      - "8084:8080"
+    networks:
+      - lecture
+
+########################################
+############## UTILIZER ################
+########################################
+
+  graalvm-demo-book-utilizer:
+    container_name: graalvm-demo-book-utilizer
+    image: graalvm-utilizer:0.1.0
+    build:
+      context: ./graalvm-demo-book-utilizer
+      dockerfile: Dockerfile.util
+    ports:
+      - "8085:8082"
+    volumes:
+      - ./target:/opt/dist/target
+    networks:
+      - lecture
+
+########################################
+############### MONGO DB ###############
+########################################
+
+  mongo:
+    container_name: mongo
+    image: mongo:5.0
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: demo
+      MONGO_INITDB_ROOT_PASSWORD: graalvm
+    ports:
+      - "27017:27017"
+    networks:
+      - lecture
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express:1.0.2-20-alpine3.19
+    restart: always
+    ports:
+      - 9081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: demo
+      ME_CONFIG_MONGODB_ADMINPASSWORD: graalvm
+      ME_CONFIG_MONGODB_URL: mongodb://demo:graalvm@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+    networks:
+      - lecture
+
+########################################
+############## MONITORING ##############
+########################################
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:roz
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=365d"
+    networks:
+      - lecture
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    restart: always
+    networks:
+      - lecture
+    ports:
+      - "9338:8080"
+    privileged: true
+    volumes:
+      - /etc/machine-id:/etc/machine-id
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /dev:/dev:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg
+    command:
+      - "--store_container_labels=false"
+      - "--docker_only=true"
+
+  grafana:
+    image: grafana/grafana:11.0.0
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning:roz
+    environment:
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+    networks:
+      - lecture
+
+networks:
+  lecture:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+    name: prometheus-data

@@ -1,0 +1,39 @@
+ARG BUILDER_WORKDIR="/usr/src/lecture-utilizer"
+ARG BUILDER_DIST_DIR="${BUILDER_WORKDIR}/target/dist"
+#############################
+# Build Application
+#############################
+# Use Eclipse Temurin JDK for building the application
+FROM eclipse-temurin:21.0.3_9-jdk-alpine AS builder
+WORKDIR /usr/src/lecture-utilizer
+
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+RUN ./mvnw verify --fail-never
+COPY src src
+RUN ./mvnw package
+ARG BUILDER_DIST_DIR
+RUN java -Djarmode=tools -jar target/graalvm-utilizer-*.jar extract --layers --launcher --destination "${BUILDER_DIST_DIR}"
+
+#############################
+# Build Layered Image
+#############################
+FROM eclipse-temurin:21.0.3_9-jre-alpine
+
+RUN adduser -D -s /bin/false -u 1000 appuser
+
+# Set the working directory
+WORKDIR /opt/dist
+ARG BUILDER_DIST_DIR
+COPY --from=builder ${BUILDER_DIST_DIR}/dependencies/ ./
+COPY --from=builder ${BUILDER_DIST_DIR}/snapshot-dependencies/ ./
+COPY --from=builder ${BUILDER_DIST_DIR}/spring-boot-loader/ ./
+COPY --from=builder ${BUILDER_DIST_DIR}/application/ ./
+
+RUN mkdir -p /opt/dist/target && chown -R appuser:appuser /opt/dist
+
+CMD exec java ${JAVA_OPTS} -server "org.springframework.boot.loader.launch.JarLauncher"
+
+EXPOSE 8082
+
+USER appuser

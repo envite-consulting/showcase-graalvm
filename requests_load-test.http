@@ -1,0 +1,35 @@
+@numberOfBooks = 20
+@numberOfRequests = 10
+@concurrentUsers = 1
+
+# Run a simple load-test for graalvm-demo-book-jvm
+
+POST http://localhost:8085/load-test
+Content-Type: application/json; charset=utf-8
+
+{
+    "webClientUrl": "http://graalvm-demo-book-jvm:8080",
+    "webClientEndpoint": "/books/bulk",
+    "numberOfBooks": {{numberOfBooks}},
+    "numberOfRequests": {{numberOfRequests}},
+    "concurrentUsers": {{concurrentUsers}}
+}
+
+###
+
+
+# Run a simple load-test for graalvm-demo-book-native
+
+POST http://localhost:8085/load-test
+Content-Type: application/json; charset=utf-8
+
+{
+    "webClientUrl": "http://graalvm-demo-book-native:8080",
+    "webClientEndpoint": "/books/bulk",
+    "numberOfBooks": {{numberOfBooks}},
+    "numberOfRequests": {{numberOfRequests}},
+    "concurrentUsers": {{concurrentUsers}}
+}
+
+###
+

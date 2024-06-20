@@ -1,0 +1,54 @@
+# Ports JVM: 8080, native: 8084
+@port = 8084
+
+# Create new Book
+
+POST http://localhost:{{port}}/books
+Content-Type: application/json; charset=utf-8
+
+{
+    "id": "978-3-8477-1359-3",
+    "title": "Nils Holgerssons wunderbare Reise durch Schweden",
+    "author": "Selma Lagerlöf",
+    "pageCount":704
+}
+
+###
+
+
+# Get Book by id
+
+GET http://localhost:{{port}}/books/978-3-8477-1359-3
+
+###
+
+
+# Get all books currently stored
+
+GET http://localhost:{{port}}/books
+
+###
+
+
+# Create mulitple new books
+
+POST http://localhost:{{port}}/books/bulk
+Content-Type: application/json; charset=utf-8
+
+[
+  {"id":"978-0-345-40946-1","title":"The Demon-Haunted World","author":"Carl Sagan, Ann Druyan","pageCount":480},
+  {"id":"978-0-345-53943-4","title":"Cosmos","author":"Carl Sagan","pageCount":432}
+]
+
+###
+
+
+# Get multiple books by id
+
+GET http://localhost:{{port}}/books/bulk/978-0-345-40946-1,978-0-345-53943-4
+
+###
+
+
+
+

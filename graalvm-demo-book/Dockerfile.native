@@ -1,0 +1,33 @@
+ARG BUILDER_WORKDIR="/usr/src/lecture-graalvm"
+ARG BUILDER_DIST_DIR="${BUILDER_WORKDIR}/target/dist"
+#############################
+# Build Application
+#############################
+# https://www.graalvm.org/latest/docs/getting-started/container-images/
+FROM ghcr.io/graalvm/native-image-community:21-muslib as builder
+ARG BUILDER_WORKDIR
+WORKDIR ${BUILDER_WORKDIR}
+
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+RUN ./mvnw verify --fail-never
+COPY src src
+ARG BUILDER_DIST_DIR
+RUN ./mvnw -Pnative,musl native:compile
+
+RUN mkdir -p "${BUILDER_DIST_DIR}" && cp target/graalvm-book "${BUILDER_DIST_DIR}/" \
+  && mkdir -p "${BUILDER_DIST_DIR}/tmp" && chmod 777 "${BUILDER_DIST_DIR}/tmp"
+
+#############################
+# Build Layered Image
+#############################
+FROM scratch
+
+ARG BUILDER_DIST_DIR
+COPY --from=builder ${BUILDER_DIST_DIR}/ /
+
+CMD ["/graalvm-book"]
+
+EXPOSE 8080
+
+USER 1000

@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+
+  lecture-utilizer:
+    container_name: lecture-utilizer
+    build:
+      context: .
+      dockerfile: Dockerfile.util
+    ports:
+      - "8086:8082"
+    volumes:
+      - ./logs:/opt/dist/logs

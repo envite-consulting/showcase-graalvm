@@ -1,0 +1,36 @@
+ARG BUILDER_WORKDIR="/usr/src/lecture-graalvm"
+ARG BUILDER_DIST_DIR="${BUILDER_WORKDIR}/target/dist"
+#############################
+# Build Application
+#############################
+FROM eclipse-temurin:21.0.3_9-jdk-alpine as builder
+ARG BUILDER_WORKDIR
+WORKDIR ${BUILDER_WORKDIR}
+
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+RUN ./mvnw verify --fail-never
+COPY src src
+RUN ./mvnw package
+ARG BUILDER_DIST_DIR
+RUN java -Djarmode=tools -jar target/graalvm-book-*.jar extract --layers --launcher --destination "${BUILDER_DIST_DIR}"
+
+#############################
+# Build Layered Image
+#############################
+FROM eclipse-temurin:21.0.3_9-jre-alpine
+
+RUN adduser -D -s /bin/false -u 1000 appuser
+
+WORKDIR /opt/dist
+ARG BUILDER_DIST_DIR
+COPY --from=builder ${BUILDER_DIST_DIR}/dependencies/ ./
+COPY --from=builder ${BUILDER_DIST_DIR}/snapshot-dependencies/ ./
+COPY --from=builder ${BUILDER_DIST_DIR}/spring-boot-loader/ ./
+COPY --from=builder ${BUILDER_DIST_DIR}/application/ ./
+
+CMD exec java ${JAVA_OPTS} -server "org.springframework.boot.loader.launch.JarLauncher"
+
+EXPOSE 8080
+
+USER appuser
