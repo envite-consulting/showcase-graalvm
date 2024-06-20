@@ -78,11 +78,11 @@ A simplified diagram of the main components.
 ```
 
 
-## Demo Application with JVM
+## 1. Demo Application with JVM
 
 First, we have start with a normal JVM and look how our demo application behaves. 
 
-### Build Start JVM demo app
+### 1.1 Build Start JVM demo app
 
 Prepare folder structure (Linux only)
 ```bash
@@ -119,7 +119,7 @@ View start log and find the startup time of the application
 docker compose logs -f graalvm-demo-book-jvm
 ```
 
-### Play with Book API
+### 1.2 Play with Book API
 
 On Windows use Git console or another bash like terminal to run the following `curl` commands.
 Alternatively you can install VS Code Plugin "Rest client" or ItelliJ's "Services" und run the http requests via [requests.http](requests.http)
@@ -156,11 +156,11 @@ EOF
 curl http://localhost:8080/books/bulk/978-0-345-40946-1,978-0-345-53943-4
 ```
 
-### Discussion
+### 1.3 Discussion
 
 What did you discover? Is all good or do you think there are some issues especially related to Cloud?
 
-## GraalVM Native Image
+## 2. GraalVM Native Image
 
 What is GraalVM?
 
@@ -171,7 +171,7 @@ What is GraalVM?
 
 --> How does it solve our problem? Compilation to native binary moves stuff from runtime to compile time.
 
-### Build Start demo app build with GraalVM native image
+### 2.1 Build Start demo app build with GraalVM native image
 
 Build native image:
 ```bash
@@ -197,7 +197,7 @@ View start log and find the startup time of the application
 docker compose logs -f graalvm-demo-book-native
 ```
 
-### Execute Request against Book API
+### 2.2 Execute Request against Book API
 
 Create a new book
 ```bash
@@ -209,14 +209,14 @@ How long did the first request take?
 curl http://localhost:8084/books/978-3-8477-1359-3
 ```
 
-### Discussion
+### 2.3 Discussion
 
 What did you discover? What is better now?
 
 
-## Is GraalVM really always better?
+## 4. Is GraalVM really always better?
 
-### Docker Image Layers
+### 4.1 Docker Image Layers
 
 [Dive](https://github.com/wagoodman/dive) is a tool for exploring a docker image and layer contents.
 
@@ -239,7 +239,7 @@ docker run --rm -it \
 Which differences do you see? Do you see problems, which one is better?
 
 
-### Analysis of resource consumption and behaviour over long run
+### 4.2 Analysis of resource consumption and behaviour over long run
 
 #### Stop Application
 
@@ -388,7 +388,7 @@ Which differences do you see? During and after the load-test?
 
 For which kind of workload would you use which variant?
 
-### Further Discussion
+### 4.3 Further Discussion
 
 * JVM vs. GraalVM native: advantages and disadvantages
 * In relation to Cloud Computing?
