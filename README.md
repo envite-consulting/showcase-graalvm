@@ -8,6 +8,13 @@ Goals of this tutorial:
 
 ## Prerequisites
 
+Download and install [git](https://git-scm.com/downloads) for your operating system.
+
+Docker requires [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) (Windows Subsystem for Linux)
+```bash
+wsl --install
+````
+
 Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop/) on Windows 
 or [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/linux/) on Linux.
 
@@ -82,7 +89,19 @@ A simplified diagram of the main components.
 
 First, we have start with a normal JVM and look how our demo application behaves. 
 
+You can use any command line tool (Terminal, PowerShell, Bash, ...)
+
 ### 1.1 Build Start JVM demo app
+
+Clone the GitHub repository
+```bash
+git clone https://github.com/envite-consulting/showcase-graalvm.git
+```
+
+Navigate to the directory (the entire rest of this tutorial can be executed from this directory)
+```bash
+cd showcase-graalvm
+```
 
 Prepare folder structure (Linux only)
 ```bash
