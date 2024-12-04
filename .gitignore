@@ -5,6 +5,7 @@ HELP.md
 target/
 /logs/application.log
 demo.iml
+load-test-results.md
 
 ### STS ###
 .apt_generated
