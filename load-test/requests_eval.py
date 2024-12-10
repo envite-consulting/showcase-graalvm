@@ -5,6 +5,14 @@ import matplotlib.ticker as ticker
 import numpy as np
 import math
 
+image_mapping = {
+    "jvm": "jvm",
+    "jlink": "jvm-jlink",
+    "cds": "jvm-jlink-cds",
+    "aot": "jvm-jlink-cds-aot",
+    "native": "native"
+}
+
 
 def round_to_first_digit(numbers):
     rounded_numbers = []
@@ -18,8 +26,21 @@ def round_to_first_digit(numbers):
     return rounded_numbers
 
 
-def main(file_path):
-    data = pd.read_csv(file_path)
+def smooth_data(data, window_size=5):
+    return data.rolling(window=window_size, min_periods=1, center=True).mean()
+
+
+def main(file_path, smooth=False):
+    column_names = [image_mapping[images] for images in selected_images if images in image_mapping]
+    default_images = ["jvm", "native"]
+    if not column_names:
+        print(f"Invalid image names provided. Using default images: {default_images}")
+        column_names = default_images
+
+    data = pd.read_csv(file_path, usecols=column_names)
+
+    if smooth:
+        data = data.apply(smooth_data)
 
     # Extract data from all columns and find the min and max values
     all_data = data.values.flatten()
@@ -55,8 +76,13 @@ def main(file_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot data from CSV file.")
+    parser.add_argument("-i", "--images", metavar='', type=str, required=True,
+                        help="Comma-separated list of image short names (e.g., 'jvm,cds,native').")
     parser.add_argument("-f", "--file", metavar='', type=str, default="./load-test/responses.csv",
                         help="Path to the CSV file (default: ./load-test/responses.csv)")
+    parser.add_argument("-s", "--smooth", action="store_true",
+                        help="Enable smoothing for the graph.")
     args = parser.parse_args()
+    selected_images = args.images.split(',')
 
-    main(args.file)
+    main(args.file, smooth=args.smooth)

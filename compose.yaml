@@ -42,7 +42,7 @@ services:
     environment:
       - SERVER_PORT=8080
       - SPRING_DATA_MONGODB_URI=mongodb://demo:graalvm@mongo:27017/demo?authSource=admin
-    cpuset: "0-7"
+    #cpuset: "0-7"
     deploy:
       resources:
         limits:
