@@ -1,4 +1,4 @@
-# Ports JVM: 8080, native: 8084
+# Ports JVM: 8080, jlink: 8081, cds: 8082, aot:8083, native: 8084
 @port = 8084
 
 # Create new Book

@@ -25,15 +25,15 @@ there is no need to install GraalVM or Java locally.
 
 ## Project Structure
 
-```bash
-lecture-graalvm
+```json
+graalvm-demo-root
 ├── graalvm-demo-book
 │   ├── Main Application
 │   └── Insert books into a MongoDB
 │
 ├── graalvm-demo-book-utilizer
 │   ├── Utilizer Application
-│   └── Create a load-test of the Main Application
+│   └── Create a load-test for graalvm-demo-book
 │
 ├── load-test
 │   ├── Python Scripts
@@ -103,13 +103,13 @@ Navigate to the directory (the entire rest of this tutorial can be executed from
 cd showcase-graalvm
 ```
 
-Prepare folder structure (Linux only)
+**Linux only**: Prepare folder structure
 ```bash
 mkdir target && chmod -R g+rX,o+rX target
 chmod -R g+rX,o+rX monitoring
 ```
 
-Pull all images, e.g. mongo db
+Pull all docker images, e.g. mongo db
 ```bash
 docker compose pull --ignore-buildable
 ```
@@ -286,7 +286,7 @@ Which differences do you see on the Grafana Dashboard?
 #### Run utilizer
 
 On Windows use Git console or another bash like terminal to run the following `curl` commands.
-Alternatively you can install VS Code Plugin "Rest client" or ItelliJ's "Services" und run the http requests via [requests_load-test.http](requests_load-test.http).
+Alternatively you can install VS Code Plugin "Rest client" or use ItelliJ's "Services" und run the http requests via [requests_load-test.http](requests_load-test.http).
 
 These are the parameters of graalvm-demo-book-utilizer
 
@@ -358,14 +358,14 @@ Which differences do you see?
 
 #### Run python load-test
 
-Create Python environment and install requirements (Windows)
+Windows: Create Python environment and install requirements
 ```bash
 python -m 'venv' .venv
 .venv/Scripts/activate
 pip install -r ./load-test/requirements.txt
 ```
 
-Create Python environment and install requirements (Linux)
+Linux: Create Python environment and install requirements
 ```bash
 python -m 'venv' .venv
 source .venv/bin/activate
@@ -383,8 +383,8 @@ Wait some seconds and then start the book apps:
 docker compose up -d graalvm-demo-book-jvm graalvm-demo-book-native
 ```
 
-Hint: On Linux, if you have a CPU with performance and efficience cores, you can pin the containers to a specific CPU-set in the [compose.yaml](compose.yaml) file.
-For example if you have a Intel CPU with 4 performance cores and you want to ensure that the load test runs on them, set cpuset to "0-7".
+Hint: If you have a CPU with performance and efficiency cores, you can pin the containers to a specific CPU-set in the [compose.yaml](compose.yaml) file.
+For example if you have an Intel CPU with 4 performance cores, and you want to ensure that the load test runs on them, set cpuset to "0-7".
 ```yaml
 graalvm-demo-book-jvm:
     container_name: graalvm-demo-book-jvm
@@ -400,7 +400,7 @@ python ./load-test/send_requests.py --urls "jvm,native" --runs 150
 
 Evaluate the load-test
 ```bash
-python ./load-test/requests_eval.py
+python ./load-test/requests_eval.py --images "jvm,native"
 ```
 
 Which differences do you see? During and after the load-test?
