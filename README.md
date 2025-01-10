@@ -10,7 +10,7 @@ Goals of this tutorial:
 
 Download and install [git](https://git-scm.com/downloads) for your operating system.
 
-Docker requires [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) (Windows Subsystem for Linux)
+Windows only: Docker requires [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) (Windows Subsystem for Linux)
 ```bash
 wsl --install
 ````
@@ -25,7 +25,7 @@ there is no need to install GraalVM or Java locally.
 
 ## Project Structure
 
-```json
+```
 graalvm-demo-root
 ├── graalvm-demo-book
 │   ├── Main Application
