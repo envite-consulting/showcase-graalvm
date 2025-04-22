@@ -21,19 +21,36 @@ services:
     container_name: curl
     image: curlimages/curl:8.1.0
     command: sh
+    setup-commands:
+      - sleep 5
     depends on:
       graalvm-demo-book-utilizer:
         condition: service_healthy
+      graalvm-demo-book-native:
+        condition: service_started
 
 flow:
-  - name: Loadtest
+  - name: Loadtest - Warmup Phase
     container: curl
     commands:
       - type: console
-        command: sleep 10
-        note: Wait for all containers to boot properly
+        command: |
+          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-native:8081","webClientEndpoint":"/books/bulk","numberOfBooks":50,"numberOfRequests":150,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
+        note: Post Books
+        log-stdout: true
+  - name: Loadtest - Optimization Phase
+    container: curl
+    commands:
       - type: console
         command: |
-          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-native:8081","webClientEndpoint":"/books/bulk","numberOfBooks":30,"numberOfRequests":30,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
+          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-native:8081","webClientEndpoint":"/books/bulk","numberOfBooks":50,"numberOfRequests":1350,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
+        note: Post Books
+        log-stdout: true
+  - name: Loadtest - Aggressive Optimization Phase
+    container: curl
+    commands:
+      - type: console
+        command: |
+          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-native:8081","webClientEndpoint":"/books/bulk","numberOfBooks":50,"numberOfRequests":1000,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
         note: Post Books
         log-stdout: true
