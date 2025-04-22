@@ -1,0 +1,54 @@
+services:
+
+########################################
+############### GRAALVM ################
+########################################
+
+  graalvm-demo-book-native:
+    container_name: graalvm-demo-book-native
+    image: enviteconsulting/graalvm-demo-book-native:0.1.0
+    restart: always
+    depends_on:
+      - mongo
+    environment:
+      SERVER_PORT: 8081
+      SPRING_DATA_MONGODB_URI: mongodb://demo:graalvm@mongo:27017/demo?authSource=admin
+    deploy:
+      resources:
+        limits:
+          memory: '512M'
+          cpus: '1'
+        reservations:
+          memory: '512M'
+          cpus: '1'
+    ports:
+      - "8081:8081"
+
+########################################
+############## UTILIZER ################
+########################################
+
+  graalvm-demo-book-utilizer:
+    container_name: graalvm-demo-book-utilizer
+    image: enviteconsulting/graalvm-utilizer:0.1.0
+    ports:
+      - "8085:8082"
+    healthcheck:
+      test: "wget -q -O - graalvm-demo-book-utilizer:8082/actuator/health 2>&1 | grep UP"
+      start_period: "30s"
+      start_interval: "1s"
+      interval: "24h"
+
+########################################
+############### MONGO DB ###############
+########################################
+
+  mongo:
+    container_name: mongo
+    image: mongo:5.0
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: demo
+      MONGO_INITDB_ROOT_PASSWORD: graalvm
+    ports:
+      - "27017:27017"

@@ -1,0 +1,39 @@
+---
+name: GraalVM vs JVM Loadtest
+author: Vincent Roßknecht
+description: Messung der native GraalVM version
+
+compose-file: !include compose.gmt.native.yaml
+
+services:
+  mongo:
+    container_name: mongo
+
+  graalvm-demo-book-native:
+    container_name: graalvm-demo-book-native
+    depends on:
+      - mongo
+
+  graalvm-demo-book-utilizer:
+    container_name: graalvm-demo-book-utilizer
+
+  curl:
+    container_name: curl
+    image: curlimages/curl:8.1.0
+    command: sh
+    depends on:
+      graalvm-demo-book-utilizer:
+        condition: service_healthy
+
+flow:
+  - name: Loadtest
+    container: curl
+    commands:
+      - type: console
+        command: sleep 10
+        note: Wait for all containers to boot properly
+      - type: console
+        command: |
+          curl -v POST -d'{"webClientUrl":"http://graalvm-demo-book-native:8081","webClientEndpoint":"/books/bulk","numberOfBooks":30,"numberOfRequests":30,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
+        note: Post Books
+        log-stdout: true
