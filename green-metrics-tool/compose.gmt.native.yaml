@@ -4,8 +4,8 @@ services:
 ############### GRAALVM ################
 ########################################
 
-  graalvm-demo-book-native:
-    container_name: graalvm-demo-book-native
+  graalvm-demo-book-app:
+    container_name: graalvm-demo-book-app
     image: enviteconsulting/graalvm-demo-book-native:0.1.0
     restart: always
     depends_on:

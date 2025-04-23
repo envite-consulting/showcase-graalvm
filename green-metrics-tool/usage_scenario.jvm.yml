@@ -9,8 +9,8 @@ services:
   mongo:
     container_name: mongo
 
-  graalvm-demo-book-jvm:
-    container_name: graalvm-demo-book-jvm
+  graalvm-demo-book-app:
+    container_name: graalvm-demo-book-app
     depends on:
       - mongo
 
@@ -22,7 +22,7 @@ services:
     image: curlimages/curl:8.1.0
     command: sh
     depends on:
-      graalvm-demo-book-jvm:
+      graalvm-demo-book-app:
         condition: service_healthy
       graalvm-demo-book-utilizer:
         condition: service_healthy
@@ -33,7 +33,7 @@ flow:
     commands:
       - type: console
         command: |
-          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-jvm:8081","webClientEndpoint":"/books/bulk","numberOfBooks":50,"numberOfRequests":150,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
+          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-app:8081","webClientEndpoint":"/books/bulk","numberOfBooks":50,"numberOfRequests":150,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
         note: Post Books
         log-stdout: true
   - name: Loadtest - Optimization Phase
@@ -41,7 +41,7 @@ flow:
     commands:
       - type: console
         command: |
-          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-jvm:8081","webClientEndpoint":"/books/bulk","numberOfBooks":50,"numberOfRequests":1350,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
+          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-app:8081","webClientEndpoint":"/books/bulk","numberOfBooks":50,"numberOfRequests":1350,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
         note: Post Books
         log-stdout: true
   - name: Loadtest - Aggressive Optimization Phase
@@ -49,6 +49,6 @@ flow:
     commands:
       - type: console
         command: |
-          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-jvm:8081","webClientEndpoint":"/books/bulk","numberOfBooks":50,"numberOfRequests":1000,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
+          curl -X POST -d'{"webClientUrl":"http://graalvm-demo-book-app:8081","webClientEndpoint":"/books/bulk","numberOfBooks":50,"numberOfRequests":1000,"concurrentUsers":20}' -H'Content-Type: application/json; charset=utf-8' http://graalvm-demo-book-utilizer:8082/load-test
         note: Post Books
         log-stdout: true

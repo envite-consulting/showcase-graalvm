@@ -4,8 +4,8 @@ services:
 ################# JVM ##################
 ########################################
 
-  graalvm-demo-book-jvm:
-    container_name: graalvm-demo-book-jvm
+  graalvm-demo-book-app:
+    container_name: graalvm-demo-book-app
     image: enviteconsulting/graalvm-demo-book-jvm:0.1.0
     restart: always
     depends_on:
@@ -24,7 +24,7 @@ services:
     ports:
       - "8081:8081"
     healthcheck:
-      test: "wget -q -O - graalvm-demo-book-jvm:8081/actuator/health 2>&1 | grep UP"
+      test: "wget -q -O - graalvm-demo-book-app:8081/actuator/health 2>&1 | grep UP"
       start_period: "30s"
       start_interval: "1s"
       interval: "24h"
