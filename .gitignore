@@ -40,6 +40,8 @@ build/
 /requests_eval.py
 /requsts.py
 /responses.csv
-/venv/
-/.venv/
+venv
+.venv
 /load-test/results/
+blog/
+
