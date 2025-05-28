@@ -4,7 +4,7 @@ ARG BUILDER_JRE_DIR="${BUILDER_WORKDIR}/target/jre"
 #############################
 # Build Application
 #############################
-FROM eclipse-temurin:21.0.3_9-jdk-alpine as builder
+FROM eclipse-temurin:21.0.7_6-jdk-alpine as builder
 ARG BUILDER_WORKDIR
 WORKDIR ${BUILDER_WORKDIR}
 

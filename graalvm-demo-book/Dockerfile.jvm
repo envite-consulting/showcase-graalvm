@@ -3,7 +3,7 @@ ARG BUILDER_DIST_DIR="${BUILDER_WORKDIR}/target/dist"
 #############################
 # Build Application
 #############################
-FROM eclipse-temurin:21.0.3_9-jdk-alpine as builder
+FROM eclipse-temurin:21.0.7_6-jdk-alpine as builder
 ARG BUILDER_WORKDIR
 WORKDIR ${BUILDER_WORKDIR}
 
@@ -18,7 +18,7 @@ RUN java -Djarmode=tools -jar target/graalvm-book-*.jar extract --layers --launc
 #############################
 # Build Layered Image
 #############################
-FROM eclipse-temurin:21.0.3_9-jre-alpine
+FROM eclipse-temurin:21.0.7_6-jre-alpine
 
 RUN adduser -D -s /bin/false -u 1000 appuser
 

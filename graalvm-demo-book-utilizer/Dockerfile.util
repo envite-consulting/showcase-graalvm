@@ -4,7 +4,7 @@ ARG BUILDER_DIST_DIR="${BUILDER_WORKDIR}/target/dist"
 # Build Application
 #############################
 # Use Eclipse Temurin JDK for building the application
-FROM eclipse-temurin:21.0.3_9-jdk-alpine AS builder
+FROM eclipse-temurin:21.0.7_6-jdk-alpine AS builder
 WORKDIR /usr/src/lecture-utilizer
 
 COPY pom.xml mvnw ./
@@ -18,7 +18,7 @@ RUN java -Djarmode=tools -jar target/graalvm-utilizer-*.jar extract --layers --l
 #############################
 # Build Layered Image
 #############################
-FROM eclipse-temurin:21.0.3_9-jre-alpine
+FROM eclipse-temurin:21.0.7_6-jre-alpine
 
 RUN adduser -D -s /bin/false -u 1000 appuser
 
