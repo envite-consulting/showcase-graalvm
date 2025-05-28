@@ -233,9 +233,9 @@ curl http://localhost:8084/books/978-3-8477-1359-3
 What did you discover? What is better now?
 
 
-## 4. Is GraalVM really always better?
+## 3. Is GraalVM really always better?
 
-### 4.1 Docker Image Layers
+### 3.1 Docker Image Layers
 
 [Dive](https://github.com/wagoodman/dive) is a tool for exploring a docker image and layer contents.
 
@@ -258,7 +258,7 @@ docker run --rm -it \
 Which differences do you see? Do you see problems, which one is better?
 
 
-### 4.2 Analysis of resource consumption and behaviour over long run
+### 3.2 Analysis of resource consumption and behaviour over long run
 
 #### Stop Application
 
@@ -407,7 +407,7 @@ Which differences do you see? During and after the load-test?
 
 For which kind of workload would you use which variant?
 
-### 4.3 Further Discussion
+### 3.3 Further Discussion
 
 * JVM vs. GraalVM native: advantages and disadvantages
 * In relation to Cloud Computing?
