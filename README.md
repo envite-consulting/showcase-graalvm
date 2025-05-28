@@ -118,6 +118,8 @@ Build JVM image:
 ```bash
 docker compose build graalvm-demo-book-jvm
 ```
+> ℹ️ For Apple M4 laptops, there was an issue with Java in Docker versions before 4.39.0.
+> If your build fails on an M4 machine, make sure that your Docker is on version >=4.39.0 
 
 Dockerfile: [graalvm-demo-book/Dockerfile.jvm](graalvm-demo-book/Dockerfile.jvm)
 * Docker multi-stage build
